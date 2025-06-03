@@ -1,31 +1,29 @@
 const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
 const cors = require("cors");
+const connectDB = require("./db");
 
+// route imprts
+const authRoutes = require("./routes/authRoutes");
+const facebookRoutes = require("./routes/facebookRoutes");
+const scheduledPostRoutes = require("./routes/scheduledPostRoutes");
+const postRoutes = require('./routes/postRoutes');
+const authMiddleware = require('./middlewares/auth');
+
+
+
+require("dotenv").config();
 const app = express();
-
 app.use(cors());
-
-// Middleware to parse JSON data
 app.use(express.json());
-app.get("/", (req, res) => {
-  res.send("Hello, World!");
-});
 
-mongoose
-  .connect(
-    "mongodb+srv://admin:admin@socialbraindb.yisnycm.mongodb.net/?retryWrites=true&w=majority&appName=SocialBrainDb"
-  )
-  .then(async () => {
-    console.log("✅ Connected to MongoDB");
-    try {
-    } catch (err) {
-      console.log("Could not save test user:", err.message);
-    }
-  })
-  .catch((err) => {
-    console.error(" Connection error:", err);
-  });
+//  routes
+app.use('/api/auth', authRoutes);
+app.use('/api/posts', authMiddleware, postRoutes);
+app.use('/api/scheduled-posts', authMiddleware, scheduledPostRoutes);
+app.use('/api/facebook', authMiddleware, facebookRoutes);
+
+
+// Call the connectDB function to connect MongoDB
+connectDB();
 
 module.exports = app;
