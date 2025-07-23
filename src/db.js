@@ -10,5 +10,4 @@ const connectDB = async () => {
   }
 };
 
-// export both DB and GridFS connection
 module.exports = connectDB;
